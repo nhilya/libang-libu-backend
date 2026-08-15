@@ -1,7 +1,13 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    Boxes,
+    ClipboardList,
+    ContactRound,
+    LayoutDashboard,
+    Package,
+    School,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -13,31 +19,62 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/admin';
+import { index as activitiesIndex } from '@/routes/admin/activities';
+import { index as contactsIndex } from '@/routes/admin/contacts';
+import { index as leadsIndex } from '@/routes/admin/leads';
+import { index as productsIndex } from '@/routes/admin/products';
+import { index as programmesIndex } from '@/routes/admin/programmes';
+import { index as schoolsIndex } from '@/routes/admin/schools';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const dashboardItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        icon: LayoutDashboard,
     },
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props;
+
+    const salesItems: NavItem[] = [
+        auth.permissions.view_sales && {
+            title: 'Leads',
+            href: leadsIndex(),
+            icon: ClipboardList,
+        },
+        auth.permissions.view_schools && {
+            title: 'Schools',
+            href: schoolsIndex(),
+            icon: School,
+        },
+        auth.permissions.view_contacts && {
+            title: 'Contacts',
+            href: contactsIndex(),
+            icon: ContactRound,
+        },
+    ].filter(Boolean) as NavItem[];
+
+    const productItems: NavItem[] = [
+        auth.permissions.view_products && {
+            title: 'Products',
+            href: productsIndex(),
+            icon: Package,
+        },
+        auth.permissions.view_programmes && {
+            title: 'Programmes',
+            href: programmesIndex(),
+            icon: Boxes,
+        },
+        auth.permissions.view_activities && {
+            title: 'Activities',
+            href: activitiesIndex(),
+            icon: ClipboardList,
+        },
+    ].filter(Boolean) as NavItem[];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -53,11 +90,16 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={dashboardItems} label="Overview" />
+                {salesItems.length > 0 && (
+                    <NavMain items={salesItems} label="Sales" />
+                )}
+                {productItems.length > 0 && (
+                    <NavMain items={productItems} label="Products" />
+                )}
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

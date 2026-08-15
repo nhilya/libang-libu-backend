@@ -2,6 +2,13 @@ export type User = {
     id: number;
     name: string;
     email: string;
+    role:
+        | 'super_admin'
+        | 'management'
+        | 'sales'
+        | 'operations'
+        | 'finance'
+        | 'guide_coordinator';
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
@@ -12,6 +19,7 @@ export type User = {
 
 export type Auth = {
     user: User;
+    permissions: Record<string, boolean>;
 };
 
 export type Passkey = {

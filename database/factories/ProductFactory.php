@@ -1,0 +1,32 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Company;
+use App\Models\Product;
+use App\RecordStatus;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Product>
+ */
+class ProductFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'company_id' => Company::factory(),
+            'name' => fake()->words(3, true),
+            'slug' => fake()->unique()->slug(),
+            'description' => fake()->paragraph(),
+            'status' => RecordStatus::Active,
+            'product_type' => 'educational_tour',
+            'customer_segment' => 'schools',
+        ];
+    }
+}
